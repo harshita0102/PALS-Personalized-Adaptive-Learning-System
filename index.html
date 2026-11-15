@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PALS Practice Coach</title>
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]] } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        :root {
+            --ink: #1f2937;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+            --bg: #f7f8fb;
+            --card: #fff;
+            --brand: #4f46e5;
+            --brand2: #3730a3;
+            --ok: #15803d;
+            --okbg: #dcfce7;
+            --bad: #b91c1c;
+            --badbg: #fee2e2;
+            --warn: #92400e;
+            --warnbg: #fef3c7
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.5
+        }
+
+        header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 5
+        }
+
+        .bar {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .brand {
+            font-weight: 700;
+            color: var(--brand2);
+            font-size: 18px;
+            text-decoration: none
+        }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 4px;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: inline-block
+        }
+
+        nav a:hover {
+            background: #eef2ff;
+            color: var(--brand2)
+        }
+
+        nav a.active {
+            background: var(--brand);
+            color: #fff
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 0 20px 60px
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 0 0 10px
+        }
+
+        h3 {
+            font-size: 16px;
+            margin: 0 0 6px
+        }
+
+        .lead {
+            color: var(--muted);
+            font-size: 16px;
+            max-width: 760px
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .03)
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr))
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--brand);
+            color: #fff;
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 18px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none
+        }
+
+        .btn:hover {
+            background: var(--brand2)
+        }
+
+        .btn.ghost {
+            background: #eef2ff;
+            color: var(--brand2)
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 16px 0 6px
+        }
+
+        input[type=text],
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font: inherit;
+            background: #fff
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #c7d2fe;
+            border-color: var(--brand)
+        }
+
+        .hint {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px
+        }
+
+        .err {
+            color: var(--bad);
+            font-size: 14px;
+            margin-top: 12px;
+            min-height: 20px
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px
+        }
+
+        .choice {
+            text-align: left;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 12px;
+            padding: 14px;
+            font: inherit;
+            cursor: pointer
+        }
+
+        .choice:hover:not(:disabled) {
+            border-color: var(--brand);
+            background: #f5f7ff
+        }
+
+        .choice.sel {
+            border-color: var(--brand);
+            background: #eef2ff
+        }
+
+        .choice:disabled {
+            cursor: default
+        }
+
+        .choice b {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: var(--brand2);
+            margin-right: 8px
+        }
+
+        .choice.right {
+            border-color: var(--ok);
+            background: var(--okbg)
+        }
+
+        .choice.wrong {
+            border-color: var(--bad);
+            background: var(--badbg)
+        }
+
+        .feedback {
+            margin-top: 18px;
+            border-radius: 14px;
+            padding: 18px
+        }
+
+        .fb-ok {
+            background: var(--okbg);
+            border: 1px solid #86efac
+        }
+
+        .fb-bad {
+            background: var(--badbg);
+            border: 1px solid #fca5a5
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #eef2ff;
+            color: var(--brand2);
+            margin-right: 6px
+        }
+
+        .tag-conc {
+            background: #fde68a;
+            color: #78350f
+        }
+
+        .tag-comp {
+            background: #bfdbfe;
+            color: #1e3a8a
+        }
+
+        .progress {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 10px 0 18px
+        }
+
+        .progress>div {
+            height: 100%;
+            background: var(--brand)
+        }
+
+        .probbar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 10px 0 4px
+        }
+
+        .probbar>div {
+            height: 100%;
+            background: #d97706
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px
+        }
+
+        .stat {
+            background: #fafafa;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px
+        }
+
+        .stat .k {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .04em
+        }
+
+        .stat .v {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 4px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px
+        }
+
+        th,
+        td {
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top
+        }
+
+        th {
+            background: #f9fafb;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .04em
+        }
+
+        .num {
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .note {
+            background: #eef2ff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #312e81;
+            font-size: 14px;
+            margin-top: 12px
+        }
+
+        .warn {
+            background: var(--warnbg);
+            color: #78350f;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            margin-top: 8px
+        }
+
+        .legend i {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 6px
+        }
+
+        .steps {
+            list-style: none;
+            padding: 0;
+            margin: 0
+        }
+
+        .steps li {
+            position: relative;
+            padding: 10px 0 10px 44px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .steps li:before {
+            content: attr(data-n);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--brand);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 14px
+        }
+
+        svg text {
+            font-family: system-ui, sans-serif
+        }
+
+        @media(max-width:640px) {
+            nav a {
+                margin: 0 2px;
+                padding: 6px 8px;
+                font-size: 13px
+            }
+
+            h1 {
+                font-size: 23px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="bar">
+            <a class="brand" href="#home">PALS Practice Coach</a>
+            <nav>
+                <a href="#home" data-r="home">Home</a>
+                <a href="#start" data-r="start">Practise</a>
+                <a href="#trace" data-r="trace">Student trace</a>
+                <a href="#evidence" data-r="evidence">Evidence</a>
+                <a href="#figures" data-r="figures">Diagrams</a>
+                <a href="#about" data-r="about">About</a>
+            </nav>
+        </div>
+    </header>
+    <main id="app"></main>
+
+    <script>
+        const GOALS = ["Understand my mistakes", "Practise for a test", "Quick check"];
+        const GOAL_NEXT = {
+            "Understand my mistakes": "Redo the questions you got wrong and read each misconception note.",
+            "Practise for a test": "Do one more set of five on this topic before the test.",
+            "Quick check": "Good quick check. Come back when you want a deeper session."
+        };
+        const ROUTES = {
+            home: renderHome, start: renderStart, practice: renderPractice, summary: renderSummary,
+            trace: renderTrace, evidence: renderEvidence, figures: renderFigures, about: renderAbout
+        };
+        const NAV = {
+            home: "home", start: "start", practice: "start", summary: "start", trace: "trace",
+            evidence: "evidence", figures: "figures", about: "about"
+        };
+
+        const $ = (s) => document.querySelector(s);
+        const app = () => document.getElementById("app");
+        const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+            ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+        const pct = (x, d = 1) => (100 * x).toFixed(d) + "%";
+
+        function typeset(el) {
+            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]).catch(() => { });
+        }
+        function h(html) {
+            app().innerHTML = html;
+            typeset(app());
+        }
+        function showError(e) {
+            h(`<div class="card"><h2>Something went wrong</h2><p class="muted">${esc(e.message)}</p>
+     <p><a class="btn ghost" href="#home">Back to home</a></p></div>`);
+        }
+        async function api(path, body) {
+            const opts = body === undefined ? {}
+                : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+            const r = await fetch(path, opts);
+            const data = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
+            return data;
+        }
+        function noSession() {
+            return `<div class="card"><h2>No practice session yet</h2><p class="muted">Set up a practice session first.</p>
+          <p><a class="btn" href="#start">Set up practice</a></p></div>`;
+        }
+
+        /* ---------- Charts and diagrams (drawn as SVG, no internet needed) ---------- */
+        function bars(items, o = {}) {
+            const W = o.w || 640, H = o.h || 280, L = 60, R = 16, T = 22, B = 48;
+            const pw = W - L - R, ph = H - T - B;
+            const ymin = o.ymin ?? 0, ymax = o.ymax ?? 1, dp = o.dp ?? 3;
+            const sy = (v) => T + ph - ((v - ymin) / (ymax - ymin)) * ph;
+            const slot = pw / items.length, bw = Math.min(90, slot * 0.6);
+            let g = "";
+            for (let i = 0; i <= 4; i++) {
+                const v = ymin + ((ymax - ymin) * i) / 4;
+                g += `<line x1="${L}" x2="${W - R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#e5e7eb"/>`;
+                g += `<text x="${L - 8}" y="${sy(v) + 4}" font-size="12" text-anchor="end" fill="#6b7280">${v.toFixed(dp)}</text>`;
+            }
+            items.forEach((it, i) => {
+                const x = L + slot * i + (slot - bw) / 2, y = sy(it.value);
+                g += `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(0, T + ph - y)}" rx="6" fill="${it.color || "#6366f1"}"/>`;
+                g += `<text x="${x + bw / 2}" y="${y - 6}" font-size="13" font-weight="700" text-anchor="middle" fill="#111827">${it.value.toFixed(dp)}</text>`;
+                g += `<text x="${x + bw / 2}" y="${T + ph + 20}" font-size="13" text-anchor="middle" fill="#374151">${esc(it.name)}</text>`;
+            });
+            g += `<line x1="${L}" x2="${L}" y1="${T}" y2="${T + ph}" stroke="#9ca3af"/>`;
+            g += `<text transform="translate(16,${T + ph / 2}) rotate(-90)" font-size="13" text-anchor="middle" fill="#374151">${esc(o.ylabel || "")}</text>`;
+            return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`;
+        }
+
+        function plot(o) {
+            const W = o.w || 720, H = o.h || 300, L = 60, R = 16, T = 16, B = 48;
+            const pw = W - L - R, ph = H - T - B;
+            const sx = (x) => L + ((x - o.xmin) / (o.xmax - o.xmin)) * pw;
+            const sy = (y) => T + ph - ((y - o.ymin) / (o.ymax - o.ymin)) * ph;
+            let g = "";
+            for (let i = 0; i <= 4; i++) {
+                const v = o.ymin + ((o.ymax - o.ymin) * i) / 4;
+                g += `<line x1="${L}" x2="${W - R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#e5e7eb"/>`;
+                g += `<text x="${L - 8}" y="${sy(v) + 4}" font-size="12" text-anchor="end" fill="#6b7280">${v.toFixed(o.dp ?? 2)}</text>`;
+            }
+            for (let x = o.xmin; x <= o.xmax + 1e-9; x += o.xstep) {
+                g += `<text x="${sx(x)}" y="${T + ph + 18}" font-size="12" text-anchor="middle" fill="#6b7280">${+x.toFixed(2)}</text>`;
+            }
+            g += `<line x1="${L}" x2="${L}" y1="${T}" y2="${T + ph}" stroke="#9ca3af"/>`;
+            g += `<line x1="${L}" x2="${W - R}" y1="${T + ph}" y2="${T + ph}" stroke="#9ca3af"/>`;
+            g += `<text x="${L + pw / 2}" y="${H - 8}" font-size="13" text-anchor="middle" fill="#374151">${esc(o.xlabel || "")}</text>`;
+            g += `<text transform="translate(16,${T + ph / 2}) rotate(-90)" font-size="13" text-anchor="middle" fill="#374151">${esc(o.ylabel || "")}</text>`;
+            o.series.forEach((s) => {
+                if (s.dots) {
+                    s.points.forEach((p, i) => {
+                        const c = Array.isArray(s.color) ? s.color[i] : s.color;
+                        g += `<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="4.5" fill="${c}" stroke="#fff"/>`;
+                    });
+                } else if (s.points.length) {
+                    const d = s.points.map((p, i) => `${i ? "L" : "M"}${sx(p[0]).toFixed(1)} ${sy(p[1]).toFixed(1)}`).join(" ");
+                    g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5"${s.dash ? ` stroke-dasharray="${s.dash}"` : ""}/>`;
+                }
+            });
+            return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`;
+        }
+
+        function legend(series) {
+            return `<div class="legend">${series.map((s) =>
+                `<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("")}</div>`;
+        }
+
+        function flow(nodes, edges, W, H) {
+            const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+            const center = (n) => [n.x + n.w / 2, n.y + n.h / 2];
+            const edgePoint = (n, dx, dy) => {
+                const [cx, cy] = center(n);
+                const s = Math.min(dx ? (n.w / 2) / Math.abs(dx) : Infinity, dy ? (n.h / 2) / Math.abs(dy) : Infinity);
+                return [cx + dx * s, cy + dy * s];
+            };
+            let g = `<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+           <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker></defs>`;
+            edges.forEach(([a, b, label]) => {
+                const A = byId[a], B = byId[b];
+                const [ax, ay] = center(A), [bx, by] = center(B);
+                const dx = bx - ax, dy = by - ay;
+                const [x1, y1] = edgePoint(A, dx, dy);
+                const [x2, y2] = edgePoint(B, -dx, -dy);
+                g += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6b7280" stroke-width="2" marker-end="url(#arr)"/>`;
+                if (label) {
+                    g += `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 8}" font-size="12" text-anchor="middle" fill="#374151" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(label)}</text>`;
+                }
+            });
+            nodes.forEach((n) => {
+                g += `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" fill="${n.fill || "#fff"}" stroke="#6366f1" stroke-width="1.5"/>`;
+                const lines = n.label.split("\n");
+                lines.forEach((t, i) => {
+                    const yy = n.y + n.h / 2 + (i - (lines.length - 1) / 2) * 17 + 5;
+                    g += `<text x="${n.x + n.w / 2}" y="${yy}" font-size="13" text-anchor="middle" fill="#111827" font-weight="${i === 0 ? 700 : 400}">${esc(t)}</text>`;
+                });
+            });
+            return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`;
+        }
+
+        /* ---------- Home ---------- */
+        function renderHome() {
+            h(`<h1>Practice that shows why you got it wrong</h1>
+    <p class="lead">PALS is a prototype for competitive exam preparation. You answer a few maths questions.
+    For each wrong answer, the system estimates whether the mistake looks like a gap in understanding or a slip
+    in the working, then gives advice to match.</p>
+    <p><a class="btn" href="#start">Start practice</a> <a class="btn ghost" href="#evidence">See the evidence</a></p>
+    <div id="status"></div>
+    <div class="grid" style="margin-top:22px">
+      <div class="card"><h3>1. You answer</h3><p class="muted">Choose a topic, a goal and how many questions. Answer one question at a time.</p></div>
+      <div class="card"><h3>2. We estimate</h3><p class="muted">Each wrong option is classified using a text model trained on Eedi misconception data.</p></div>
+      <div class="card"><h3>3. You get advice</h3><p class="muted">A summary shows your score, the kinds of mistakes, and what to practise next.</p></div>
+    </div>
+    <div class="card"><h2>What this prototype is and is not</h2>
+      <ul>
+        <li>It is a demonstration of the flow, using real Eedi questions and a trained model.</li>
+        <li>The error-type estimate agreed with a 60-item hand-labelled check only about two-thirds of the time, so treat it as a rough guide.</li>
+        <li>It does not diagnose you. It does not estimate what you know from your history.</li>
+        <li>The sequence models (LSTM and others) are shown on the Evidence and Student trace pages, not used during practice.</li>
+      </ul></div>`);
+            api("/api/status").then((s) => {
+                const box = $("#status");
+                if (!box) return;
+                let html = "";
+                if (s.missing.length) {
+                    html += `<div class="warn" style="margin-top:14px">Missing files next to app.py: ${esc(s.missing.join(", "))}.
+               Some pages will be empty until you add them.</div>`;
+                }
+                html += `<div class="note">Error-type estimates use: ${esc(s.classifier)}.</div>`;
+                box.innerHTML = html;
+            }).catch(() => { });
+        }
+
+        /* ---------- Practise: setup ---------- */
+        let chosenGoal = null;
+
+        function renderStart() {
+            chosenGoal = null;
+            h(`<h1>Set up your practice</h1>
+    <p class="lead">Four inputs. Practice is kept only while the server is running.</p>
+    <div class="card">
+      <form id="setup" novalidate>
+        <label for="name">1. Your name</label>
+        <input type="text" id="name" maxlength="40" placeholder="For example, Aisha">
+        <label for="topic">2. Topic</label>
+        <select id="topic"><option value="">Loading topics…</option></select>
+        <div class="hint" id="topicHint"></div>
+        <label>3. Your goal</label>
+        <div class="choices" id="goals">
+          ${GOALS.map((g) => `<button type="button" class="choice" data-goal="${esc(g)}">${esc(g)}</button>`).join("")}
+        </div>
+        <label for="n">4. Number of questions</label>
+        <select id="n">
+          <option value="3">3</option><option value="5" selected>5</option><option value="10">10</option>
+        </select>
+        <div class="err" id="err"></div>
+        <p><button class="btn" type="submit">Start practice</button></p>
+      </form>
+    </div>`);
+
+            document.querySelectorAll("#goals .choice").forEach((b) => b.addEventListener("click", () => {
+                chosenGoal = b.dataset.goal;
+                document.querySelectorAll("#goals .choice").forEach((x) => x.classList.toggle("sel", x === b));
+            }));
+
+            api("/api/topics").then((topics) => {
+                const sel = $("#topic");
+                if (!topics.length) {
+                    sel.innerHTML = `<option value="">No topics loaded</option>`;
+                    $("#topicHint").textContent = "eedi_questions.json was not found next to app.py.";
+                    return;
+                }
+                sel.innerHTML = `<option value="">Choose a topic…</option>` + topics.map((t) =>
+                    `<option value="${esc(t.name)}">${esc(t.name)} (${t.count} questions)</option>`).join("");
+            }).catch((e) => { $("#topicHint").textContent = e.message; });
+
+            $("#setup").addEventListener("submit", async (ev) => {
+                ev.preventDefault();
+                const err = $("#err");
+                err.textContent = "";
+                const name = $("#name").value.trim();
+                const topic = $("#topic").value;
+                if (!name) { err.textContent = "Please enter your name."; return; }
+                if (!topic) { err.textContent = "Please choose a topic."; return; }
+                if (!chosenGoal) { err.textContent = "Please choose a goal."; return; }
+                try {
+                    const r = await api("/api/session", { name, topic, goal: chosenGoal, n: Number($("#n").value) });
+                    localStorage.setItem("pals_sid", r.session);
+                    location.hash = "#practice";
+                } catch (e) {
+                    err.textContent = e.message;
+                }
+            });
+        }
+
+        /* ---------- Practise: questions and feedback ---------- */
+        async function renderPractice() {
+            const sid = localStorage.getItem("pals_sid");
+            if (!sid) return h(noSession());
+            let q;
+            try {
+                q = await api(`/api/question/${sid}`);
+            } catch (e) {
+                return h(`<div class="card"><h2>This session has ended</h2><p class="muted">${esc(e.message)}</p>
+              <p><a class="btn" href="#start">Start again</a></p></div>`);
+            }
+            if (q.done) { location.hash = "#summary"; return; }
+            h(`<div class="card">
+      <span class="pill">${esc(q.topic)}</span>
+      <div class="muted" style="font-size:14px;margin-top:6px">Question ${q.index} of ${q.total}</div>
+      <div class="progress"><div style="width:${((q.index - 1) / q.total) * 100}%"></div></div>
+      <h2 style="font-size:19px;line-height:1.6">${esc(q.text)}</h2>
+      <div class="choices" id="choices">
+        ${Object.entries(q.options).map(([L, t]) =>
+                `<button class="choice" data-letter="${L}"><b>${L}</b>${esc(t)}</button>`).join("")}
+      </div>
+      <div id="feedback"></div>
+    </div>`);
+            document.querySelectorAll("#choices .choice").forEach((b) =>
+                b.addEventListener("click", () => answer(sid, b.dataset.letter)));
+        }
+
+        async function answer(sid, L) {
+            const buttons = document.querySelectorAll("#choices .choice");
+            buttons.forEach((b) => (b.disabled = true));
+            let r;
+            try {
+                r = await api(`/api/answer/${sid}`, { choice: L });
+            } catch (e) {
+                buttons.forEach((b) => (b.disabled = false));
+                alert(e.message);
+                return;
+            }
+            buttons.forEach((b) => {
+                if (b.dataset.letter === r.right_answer) b.classList.add("right");
+                if (!r.correct && b.dataset.letter === r.chosen) b.classList.add("wrong");
+            });
+            $("#feedback").innerHTML = feedbackHtml(r);
+            typeset($("#feedback"));
+            $("#nextBtn").addEventListener("click", async () => {
+                await api(`/api/next/${sid}`, {});
+                renderPractice();
+            });
+        }
+
+        function feedbackHtml(r) {
+            const next = `<p><button class="btn" id="nextBtn">Next</button></p>`;
+            if (r.correct) {
+                return `<div class="feedback fb-ok"><b>Correct.</b> Well done.</div>${next}`;
+            }
+            const isConc = r.kind === "conceptual";
+            const pctTxt = Math.round(r.p_conceptual * 100);
+            const label = isConc ? "a gap in understanding" : "a slip in the working";
+            const tip = isConc
+                ? "Revisit the rule or idea behind this question before more practice."
+                : "Redo the steps one line at a time, checking signs, decimals and arithmetic.";
+            const how = r.method === "classifier"
+                ? "Estimate from the trained text classifier."
+                : "Estimate from the keyword rule (the classifier file was not loaded).";
+            const note = r.misconception
+                ? `<p class="muted" style="margin:10px 0 0">Misconception linked to this option in the dataset: <i>${esc(r.misconception)}</i></p>`
+                : "";
+            return `<div class="feedback fb-bad">
+      <b>Not quite.</b> The correct answer is <b>${esc(r.right_answer)}</b>: ${esc(r.right_text)}
+      <div style="margin-top:12px">
+        <span class="pill ${isConc ? "tag-conc" : "tag-comp"}">${isConc ? "Conceptual" : "Computational"} (estimate)</span>
+        This looks more like ${label}.
+      </div>
+      <div class="probbar"><div style="width:${pctTxt}%"></div></div>
+      <div class="hint">Estimated chance this mistake is conceptual: ${pctTxt}%. ${how}</div>
+      <p style="margin:12px 0 0">${tip}</p>${note}
+    </div>${next}`;
+        }
+
+        /* ---------- Summary ---------- */
+        async function renderSummary() {
+            const sid = localStorage.getItem("pals_sid");
+            if (!sid) return h(noSession());
+            let s;
+            try {
+                s = await api(`/api/summary/${sid}`);
+            } catch (e) {
+                return h(`<div class="card"><h2>Not ready yet</h2><p class="muted">${esc(e.message)}</p>
+              <p><a class="btn" href="#practice">Back to practice</a></p></div>`);
+            }
+            const c = s.counts;
+            const rows = s.items.map((it) =>
+                `<tr><td class="num">${it.index}</td><td>${esc(it.chosen)}</td><td>${esc(it.status)}</td></tr>`).join("");
+            h(`<h1>Well done, ${esc(s.name)}</h1>
+    <p class="lead">Topic: ${esc(s.topic)} · Goal: ${esc(s.goal)}</p>
+    <div class="stats">
+      <div class="stat"><div class="k">Score</div><div class="v">${c.correct} of ${s.total}</div></div>
+      <div class="stat"><div class="k">Accuracy</div><div class="v">${pct(c.correct / s.total, 0)}</div></div>
+      <div class="stat"><div class="k">Conceptual (estimate)</div><div class="v">${c.conceptual}</div></div>
+      <div class="stat"><div class="k">Slips (estimate)</div><div class="v">${c.computational}</div></div>
+    </div>
+    <div class="card" style="margin-top:18px"><h2>Your answers</h2>
+      ${bars([
+                { name: "Correct", value: c.correct, color: "#16a34a" },
+                { name: "Conceptual", value: c.conceptual, color: "#d97706" },
+                { name: "Slip", value: c.computational, color: "#2563eb" }
+            ], { ymin: 0, ymax: Math.max(1, s.total), dp: 0, ylabel: "Questions" })}
+    </div>
+    <div class="card"><h2>Advice</h2>
+      <p>${esc(s.advice)}</p><p class="muted">${esc(s.goal_next)}</p>
+      <div class="note">These are estimates based on the wrong options you chose. They are not a diagnosis of your reasoning.</div>
+    </div>
+    <div class="card"><h2>Question by question</h2>
+      <table><tr><th class="num">#</th><th>Your choice</th><th>Result</th></tr>${rows}</table>
+    </div>
+    <p><a class="btn" id="again" href="#start">Practise again</a></p>`);
+            $("#again").addEventListener("click", () => localStorage.removeItem("pals_sid"));
+        }
+
+        /* ---------- Student trace ---------- */
+        async function renderTrace() {
+            h(`<h1>Student trace</h1>
+    <p class="lead">A held-out test student from the ASSISTments data. The line is the LSTM's predicted chance of a
+    correct answer before each question. The dots show what the student actually did (green correct, red wrong).</p>
+    <div class="card">
+      <label for="sel">Choose a student</label>
+      <select id="sel"><option value="">Loading…</option></select>
+      <div id="out" style="margin-top:16px"></div>
+    </div>`);
+            const ids = await api("/api/trace-ids");
+            const sel = $("#sel");
+            if (!ids.length) {
+                sel.innerHTML = `<option value="">No data</option>`;
+                $("#out").innerHTML = `<div class="warn">dashboard_data.json was not found next to app.py.</div>`;
+                return;
+            }
+            sel.innerHTML = `<option value="">Select…</option>` +
+                ids.map((i) => `<option value="${esc(i)}">Student ${esc(i)}</option>`).join("");
+            sel.addEventListener("change", () => showTrace(sel.value));
+        }
+
+        async function showTrace(id) {
+            const out = $("#out");
+            if (!id) { out.innerHTML = ""; return; }
+            const t = await api(`/api/trace/${id}`);
+            const n = t.actual.length, third = Math.floor(n / 3);
+            const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+            const accF = avg(t.actual.slice(0, third)), accL = avg(t.actual.slice(-third));
+            const pF = avg(t.predicted.slice(0, third)), pL = avg(t.predicted.slice(-third));
+            const diff = accL - accF;
+            let verdict = "Steady", cls = "";
+            if (diff > 0.05) { verdict = "Improved"; cls = "color:#15803d"; }
+            else if (diff < -0.05) { verdict = "Declined"; cls = "color:#b91c1c"; }
+            let tracking;
+            if (Math.abs(diff) <= 0.05) tracking = "Accuracy stayed about the same across the sequence.";
+            else if (Math.sign(pL - pF) === Math.sign(diff)) tracking = "The model's estimate moved the same way, so it tracked the change.";
+            else tracking = "The model's estimate moved the other way, so it missed the change.";
+            const colors = t.actual.map((a) => (a ? "#16a34a" : "#dc2626"));
+            out.innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="k">Questions</div><div class="v">${n}</div></div>
+      <div class="stat"><div class="k">Correct, first third</div><div class="v">${pct(accF, 0)}</div></div>
+      <div class="stat"><div class="k">Correct, last third</div><div class="v">${pct(accL, 0)}</div></div>
+      <div class="stat"><div class="k">Verdict</div><div class="v" style="${cls}">${verdict}</div></div>
+    </div>
+    <p style="margin-top:14px">Model estimate moved from ${pF.toFixed(2)} to ${pL.toFixed(2)}. ${tracking}</p>
+    ${plot({
+                w: 720, h: 300, xmin: 1, xmax: n, xstep: Math.max(1, Math.round(n / 8)), ymin: 0, ymax: 1, dp: 1,
+                xlabel: "Question number", ylabel: "Probability",
+                series: [
+                    {
+                        name: "Predicted chance correct", color: "#4f46e5",
+                        points: t.predicted.map((p, i) => [i + 1, p])
+                    },
+                    {
+                        name: "Actual (1 = correct, 0 = wrong)", dots: true, color: colors,
+                        points: t.actual.map((a, i) => [i + 1, a])
+                    }
+                ]
+            })}
+    ${legend([{ name: "Predicted chance correct", color: "#4f46e5" },
+            { name: "Answered correctly", color: "#16a34a" },
+            { name: "Answered wrong", color: "#dc2626" }])}
+    <div class="note">Short histories make these comparisons less reliable. This student is from the held-out test set,
+    so the model did not see their answers during training.</div>`;
+        }
+
+        /* ---------- Evidence (tables for the report) ---------- */
+        async function renderEvidence() {
+            const E = await api("/api/evidence");
+            const d = E.dataset, nx = E.next_answer, et = E.error_type, pe = E.persistence, fg = E.forgetting, hc = E.hand_check;
+            const r = (...c) => `<tr>${c.map((x, i) => `<td${i ? ' class="num"' : ""}>${x}</td>`).join("")}</tr>`;
+            const t = (name, head, body) => `<table class="exportable" data-name="${esc(name)}"><tr>${head.map((x, i) => `<th${i ? ' class="num"' : ""}>${esc(x)}</th>`).join("")}</tr>${body}</table>`;
+            h(`<h1>Evidence</h1>
+    <p class="lead">Every number on this page comes from the report. Screenshot the tables and charts for the
+    presentation, or download all the tables as one CSV file.</p>
+    <p><button class="btn" id="exp">Download all tables (CSV)</button></p>
+
+    <div class="card"><h2>Table 1. Dataset</h2>
+      ${t("Table 1 Dataset", ["Item", "Value"],
+                r("Answers after cleaning", d.answers.toLocaleString()) +
+                r("Students (at least 3 answers)", d.students.toLocaleString()) +
+                r("Skills", d.skills) +
+                r("Wrong answers in the test set", d.test_wrong_answers.toLocaleString()) +
+                r("Labelled wrong answers (Eedi)", d.eedi_labelled.toLocaleString()))}
+    </div>
+
+    <div class="card"><h2>Table 2. Next-answer prediction</h2>
+      ${t("Table 2 Next-answer prediction", ["Model", "Validation AUC", "Test AUC"],
+                    nx.map((m) => r(esc(m.model), m.val_auc === null ? "–" : m.val_auc.toFixed(4), m.test_auc.toFixed(4))).join(""))}
+      <div style="margin-top:16px">${bars(nx.map((m) => ({
+                        name: m.short, value: m.test_auc,
+                        color: m.model.includes("selected") ? "#4f46e5" : (m.val_auc === null ? "#cbd5e1" : "#a5b4fc")
+                    })), { ymin: 0.5, ymax: 0.75, dp: 4, ylabel: "Test AUC" })}</div>
+      <p class="hint">The vertical axis starts at 0.5 to show differences between models.</p>
+    </div>
+
+    <div class="card"><h2>Table 3. Error persistence</h2>
+      ${t("Table 3 Error persistence", ["Measure", "Value"],
+                        r("Wrong answers in the test set", d.test_wrong_answers.toLocaleString()) +
+                        r("Followed by another wrong answer on the same skill", pct(pe.persistent_share)) +
+                        r("Test AUC", pe.test_auc.toFixed(4)))}
+    </div>
+
+    <div class="card"><h2>Table 4. Error-type classifier</h2>
+      ${t("Table 4 Error-type classifier", ["Measure", "Classifier", "Always conceptual"],
+                            r("Accuracy", et.accuracy.toFixed(3), et.majority_accuracy.toFixed(4)) +
+                            r("F1 (conceptual class)", et.f1.toFixed(4), et.always_conceptual_f1.toFixed(4)) +
+                            r("AUC", et.test_auc.toFixed(4), "0.5000") +
+                            r("Conceptual share of labelled answers", pct(et.conceptual_share), "–"))}
+      <p class="hint">Labels come from a keyword rule over Eedi misconception names. The classifier ranks errors
+      reasonably, but at the 0.5 threshold it does not beat always predicting conceptual.</p>
+    </div>
+
+    <div class="card"><h2>Table 5. Hand check of the keyword rule</h2>
+      ${t("Table 5 Hand check", ["Pass", "Agreement with rule", "Share"],
+                                r("First pass (main result)", `${hc.first_pass[0]} of ${hc.first_pass[1]}`, pct(hc.first_pass[0] / hc.first_pass[1])) +
+                                r("Second, reviewed pass", `${hc.second_pass[0]} of ${hc.second_pass[1]}`, pct(hc.second_pass[0] / hc.second_pass[1])))}
+    </div>
+
+    <div class="card"><h2>Table 6. Forgetting model (simulated data)</h2>
+      ${t("Table 6 Forgetting model", ["Model", "Test MSE", "Test AUC"],
+                                    r("Global decay (one rate for everyone)", fg.global_mse.toFixed(4), fg.global_auc.toFixed(4)) +
+                                    r("Personalised half-life regression", fg.hlr_mse.toFixed(4), fg.hlr_auc.toFixed(4)) +
+                                    r("MSE reduction", fg.mse_reduction_pct.toFixed(1) + "%", "–"))}
+      <div style="margin-top:16px">${bars([
+                                        { name: "Global decay", value: fg.global_mse, color: "#94a3b8" },
+                                        { name: "Personalised", value: fg.hlr_mse, color: "#4f46e5" }
+                                    ], { ymin: 0, ymax: 0.25, dp: 4, ylabel: "Test MSE (lower is better)" })}</div>
+      <p class="hint">Simulated data, built from the same recall and miss counts the model uses. Not evidence about real students.</p>
+    </div>`);
+            $("#exp").addEventListener("click", exportCsv);
+        }
+
+        function exportCsv() {
+            const parts = [];
+            document.querySelectorAll("table.exportable").forEach((tbl) => {
+                parts.push(`# ${tbl.dataset.name}`);
+                tbl.querySelectorAll("tr").forEach((tr) => {
+                    parts.push([...tr.children].map((c) => `"${c.textContent.replace(/"/g, '""')}"`).join(","));
+                });
+                parts.push("");
+            });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([parts.join("\n")], { type: "text/csv" }));
+            a.download = "pals_report_tables.csv";
+            a.click();
+        }
+
+        /* ---------- Diagrams for the report ---------- */
+        function renderFigures() {
+            const fig1 = flow([
+                { id: "a", x: 20, y: 40, w: 190, h: 64, label: "ASSISTments logs\n2.7M answers, 27,485 students" },
+                { id: "b", x: 250, y: 40, w: 190, h: 64, label: "Split by student\n70 / 10 / 20" },
+                { id: "c", x: 480, y: 40, w: 190, h: 64, label: "Sequence models\nLSTM · Transformer · Hybrid" },
+                { id: "d", x: 710, y: 40, w: 190, h: 64, label: "Evaluation\nTest AUC, held-out students" },
+                { id: "i", x: 710, y: 140, w: 190, h: 64, label: "Dashboard\nresults and student traces", fill: "#f5f3ff" },
+                { id: "e", x: 20, y: 230, w: 190, h: 64, label: "Eedi misconception data\n9,737 labelled wrong answers" },
+                { id: "f", x: 250, y: 230, w: 190, h: 64, label: "Keyword rule\ncalculation word or not" },
+                { id: "g", x: 480, y: 230, w: 190, h: 64, label: "Text classifier\nTF-IDF + logistic regression" },
+                { id: "hh", x: 710, y: 230, w: 190, h: 64, label: "Student prototype\nestimate per wrong answer", fill: "#ecfdf5" }
+            ], [["a", "b"], ["b", "c"], ["c", "d"], ["d", "i"], ["e", "f"], ["f", "g"], ["g", "hh"]], 920, 320);
+
+            const fig2 = flow([
+                { id: "1", x: 20, y: 55, w: 160, h: 70, label: "1. Enter name,\ntopic and goal" },
+                { id: "2", x: 200, y: 55, w: 160, h: 70, label: "2. Answer a\nquestion" },
+                { id: "3", x: 380, y: 55, w: 160, h: 70, label: "3. Feedback:\nright or wrong" },
+                { id: "4", x: 560, y: 55, w: 160, h: 70, label: "4. If wrong: estimate\ntype and give a tip" },
+                { id: "5", x: 740, y: 55, w: 160, h: 70, label: "5. Repeat, then\nsummary and advice" }
+            ], [["1", "2"], ["2", "3"], ["3", "4"], ["4", "5"]], 920, 180);
+
+            const fig3 = flow([
+                { id: "a", x: 20, y: 110, w: 190, h: 64, label: "Misconception name\nfrom Eedi" },
+                { id: "b", x: 250, y: 110, w: 190, h: 64, label: "Calculation word\nin the name?" },
+                { id: "c", x: 480, y: 30, w: 190, h: 64, label: "Yes: computational\nlabel 0" },
+                { id: "d", x: 480, y: 190, w: 190, h: 64, label: "No: conceptual\nlabel 1" },
+                { id: "e", x: 710, y: 110, w: 190, h: 64, label: "Hand check, 60 items\n39 of 60 agree (65%)" }
+            ], [["a", "b"], ["b", "c", "yes"], ["b", "d", "no"], ["c", "e"], ["d", "e"]], 920, 280);
+
+            h(`<h1>Diagrams for the report</h1>
+    <p class="lead">Each figure is drawn from the project's structure. Screenshot a figure and paste it into the report with the caption shown.</p>
+
+    <div class="card"><h2>Figure 1. System overview</h2>${fig1}
+      <p class="hint">Two separate pipelines. The sequence models use ASSISTments logs; the error-type classifier uses Eedi questions. They share no students or questions.</p></div>
+
+    <div class="card"><h2>Figure 2. Student journey in the prototype</h2>${fig2}</div>
+
+    <div class="card"><h2>Figure 3. How error-type labels are made</h2>${fig3}
+      <p class="hint">The label is a rule over the misconception name, checked against a hand-labelled sample of 60 items.</p></div>
+
+    <div class="card"><h2>Figure 4. Data split by student</h2>
+      <div style="display:flex;height:48px;border-radius:10px;overflow:hidden;font-size:14px;font-weight:600;color:#fff">
+        <div style="width:70%;background:#4f46e5;display:grid;place-items:center">Train 70% · 19,240 students</div>
+        <div style="width:10%;background:#7c3aed;display:grid;place-items:center">10%</div>
+        <div style="width:20%;background:#0f766e;display:grid;place-items:center">Test 20% · 5,497</div>
+      </div>
+      <p class="hint">The 10% validation set (2,748 students) is the narrow purple segment. No student appears in more than one set.</p></div>
+
+    <div class="card"><h2>Figure 5. Forgetting curves (simulated)</h2>
+      ${plot({
+                w: 720, h: 300, xmin: 0, xmax: 15, xstep: 3, ymin: 0, ymax: 1, dp: 2,
+                xlabel: "Days since last practice", ylabel: "Probability of recall",
+                series: [2, 5, 10].map((hl, k) => ({
+                    name: `Half-life ${hl} days`, color: ["#dc2626", "#4f46e5", "#16a34a"][k],
+                    points: Array.from({ length: 61 }, (_, i) => [i / 4, Math.pow(2, -(i / 4) / hl)])
+                }))
+            })}
+      ${legend([{ name: "Half-life 2 days", color: "#dc2626" }, { name: "Half-life 5 days", color: "#4f46e5" },
+            { name: "Half-life 10 days", color: "#16a34a" }])}
+      <p class="hint">Recall probability after t days, for three half-lives. Illustration only; the personalised model estimates a half-life for each student.</p></div>`);
+        }
+
+        /* ---------- About ---------- */
+        function renderAbout() {
+            h(`<h1>About this prototype</h1>
+    <div class="card"><h2>How it works</h2>
+      <ol class="steps">
+        <li data-n="1">You enter a name, choose a topic and goal, and choose how many questions.</li>
+        <li data-n="2">Questions come from Eedi maths items in that topic, chosen at random.</li>
+        <li data-n="3">For each wrong answer, a text classifier estimates whether the mistake is conceptual or computational.</li>
+        <li data-n="4">The summary shows your score, the estimated mistake types, and advice matched to your goal.</li>
+      </ol></div>
+    <div class="card"><h2>Limits to state in the presentation</h2>
+      <ul>
+        <li>The error-type estimate reproduces a keyword rule over misconception names. Its agreement with a 60-item hand check was 65%.</li>
+        <li>The LSTM was trained on ASSISTments data, not on these questions, so it is not used during practice.</li>
+        <li>The forgetting model uses simulated students. It is shown for illustration only.</li>
+        <li>Predictions describe past answers. They are not a diagnosis of any student.</li>
+      </ul></div>
+    <div class="card"><h2>Files this app needs</h2>
+      <ul>
+        <li><b>app.py</b> and <b>index.html</b>: the application.</li>
+        <li><b>eedi_questions.json</b> and <b>error_model.joblib</b>: questions and the classifier (cell 5 of the Eedi notebook).</li>
+        <li><b>dashboard_data.json</b>: held-out student traces for the Student trace page.</li>
+      </ul></div>`);
+        }
+
+        /* ---------- Routing ---------- */
+        function route() {
+            const name = (location.hash.slice(1) || "home").split("?")[0];
+            document.querySelectorAll("nav a").forEach((a) => a.classList.toggle("active", a.dataset.r === NAV[name]));
+            Promise.resolve((ROUTES[name] || renderHome)()).catch(showError);
+        }
+        window.addEventListener("hashchange", route);
+        route();
+    </script>
+</body>
+
+</html>
