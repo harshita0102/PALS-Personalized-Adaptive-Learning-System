@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+kaggle.json
+progress.json__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+kaggle.json
+progress.json
